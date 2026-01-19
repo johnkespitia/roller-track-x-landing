@@ -1,0 +1,23 @@
+You are building the Roller Track X (RTX) Web MVP.
+
+Goals:
+- Professional landing + lead capture.
+- Fast, responsive, mobile-first.
+- Do NOT promise advanced AI or official rankings; this is a pilot and manual tracking.
+
+Style:
+- Clean, high-contrast, modern sports aesthetic.
+- Use brand palette: #E63946 (primary CTA), #1C1C1C, #FFFFFF; neon colors only as accents.
+
+Content:
+- Use COPY_ES.md as source of truth.
+- Include clear CTAs for: Schools, Athletes, Sponsors.
+
+Tech constraints:
+- Keep stack simple. Prefer static generation or minimal backend. Forms can POST to a simple endpoint or integrate with Sheets.
+- Include SEO meta tags and OpenGraph.
+
+Acceptance:
+- All pages lint/build.
+- Lighthouse performance high.
+- All form submissions validated and tracked with analytics events.

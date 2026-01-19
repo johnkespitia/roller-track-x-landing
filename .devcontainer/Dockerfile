@@ -1,0 +1,9 @@
+# Dockerfile opcional si necesitas personalización adicional
+# Por ahora usamos la imagen base de devcontainer
+
+FROM mcr.microsoft.com/devcontainers/javascript-node:1-20-bullseye
+
+# Instalar herramientas adicionales si es necesario
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
