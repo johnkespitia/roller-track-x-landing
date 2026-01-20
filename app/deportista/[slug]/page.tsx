@@ -24,6 +24,18 @@ export const metadata: Metadata = {
   },
 };
 
+// Generar rutas estáticas para exportación
+// En el MVP, generamos solo algunas rutas de ejemplo
+// En producción, esto vendría de una base de datos o API
+export async function generateStaticParams() {
+  // Por ahora, retornamos rutas de ejemplo para la exportación estática
+  // En producción, esto se conectaría con una base de datos
+  return [
+    { slug: 'ejemplo' },
+    // Agregar más slugs según sea necesario
+  ];
+}
+
 // En el MVP, esto es una demo. En producción, se obtendría de una base de datos
 function getAthleteData(slug: string): AthleteBasicInfo | null {
   // Por ahora retornamos datos de ejemplo

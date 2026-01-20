@@ -54,7 +54,32 @@ export const submitForm = async (
   data: FormSchoolData | FormAthleteData | FormSponsorData | AthleteHistoryEntry
 ): Promise<{ success: boolean; error?: string }> => {
   try {
-    const response = await fetch("/api/forms", {
+    // Para exportación estática (GitHub Pages), enviamos directamente a Google Apps Script
+    // La URL debe estar en NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL
+    const scriptUrl = process.env.NEXT_PUBLIC_GOOGLE_APPS_SCRIPT_URL;
+
+    if (!scriptUrl) {
+      // Si no hay URL pública, intentamos usar la ruta API (solo funciona en desarrollo)
+      const response = await fetch("/api/forms", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: formType,
+          data,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error al enviar el formulario");
+      }
+
+      return { success: true };
+    }
+
+    // Envío directo a Google Apps Script (para producción estática)
+    const response = await fetch(scriptUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -62,11 +87,12 @@ export const submitForm = async (
       body: JSON.stringify({
         type: formType,
         data,
+        timestamp: new Date().toISOString(),
       }),
     });
 
     if (!response.ok) {
-      throw new Error("Error al enviar el formulario");
+      throw new Error("Error al enviar datos a Google Sheets");
     }
 
     return { success: true };
