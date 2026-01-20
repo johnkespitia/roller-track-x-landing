@@ -4,6 +4,7 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 import SchemaOrg from "@/components/SchemaOrg";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.rollertrackx.com"),
   title: "Roller Track X | The Next Revolution of Speed",
   description: "Eventos, comunidad y seguimiento deportivo para impulsar el talento del patinaje de velocidad. Empezamos con pilotos low-cost y registro gratuito.",
   keywords: ["patinaje de velocidad", "liga de patinaje", "escuela de patinaje", "roller track", "deporte colombia"],

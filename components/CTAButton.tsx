@@ -12,6 +12,7 @@ interface CTAButtonProps {
   ctaType?: "primary" | "school" | "athlete" | "sponsor";
   children: React.ReactNode;
   className?: string;
+  disabled?: boolean;
 }
 
 export default function CTAButton({
@@ -23,6 +24,7 @@ export default function CTAButton({
   ctaType,
   children,
   className = "",
+  disabled = false,
 }: CTAButtonProps) {
   const baseStyles =
     "font-heading font-bold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2";
@@ -62,6 +64,7 @@ export default function CTAButton({
       type={type}
       onClick={handleClick}
       className={buttonClasses}
+      disabled={disabled}
     >
       {children}
     </button>
