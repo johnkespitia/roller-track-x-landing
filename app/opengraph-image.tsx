@@ -1,8 +1,7 @@
 import { ImageResponse } from "next/og";
 import { BRAND } from "@/lib/constants";
 
-// Genera og-image dinámicamente (1200x630px)
-export const alt = "Roller Track X - The Next Revolution of Speed";
+export const alt = "Roller Track X - El ecosistema digital del patinaje de velocidad";
 export const size = {
   width: 1200,
   height: 630,
@@ -48,7 +47,7 @@ export default function OpenGraphImage() {
               maxWidth: 900,
             }}
           >
-            Eventos, comunidad y seguimiento deportivo
+            Comunidad, tecnología y eventos para impulsar el talento
           </div>
         </div>
       </div>

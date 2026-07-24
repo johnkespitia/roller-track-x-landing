@@ -2,7 +2,7 @@ interface SectionProps {
   id?: string;
   className?: string;
   children: React.ReactNode;
-  background?: "white" | "dark" | "primary";
+  background?: "white" | "dark" | "primary" | "glass" | "gradient";
   padding?: "sm" | "md" | "lg";
 }
 
@@ -17,6 +17,8 @@ export default function Section({
     white: "bg-white text-dark",
     dark: "bg-dark text-white",
     primary: "bg-primary text-white",
+    glass: "bg-dark/80 backdrop-blur-md text-white",
+    gradient: "bg-gradient-to-b from-dark to-[#151515] text-white",
   };
 
   const paddingStyles = {

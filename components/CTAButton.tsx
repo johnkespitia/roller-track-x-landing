@@ -6,7 +6,7 @@ import Link from "next/link";
 interface CTAButtonProps {
   href?: string;
   onClick?: () => void;
-  variant?: "primary" | "secondary" | "outline";
+  variant?: "primary" | "secondary" | "outline" | "glow" | "ghost";
   size?: "sm" | "md" | "lg";
   type?: "button" | "submit";
   ctaType?: "primary" | "school" | "athlete" | "sponsor";
@@ -27,13 +27,15 @@ export default function CTAButton({
   disabled = false,
 }: CTAButtonProps) {
   const baseStyles =
-    "font-heading font-bold transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2";
-  
+    "font-heading font-bold transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark inline-flex items-center justify-center gap-2 rounded-lg";
+
   const variantStyles = {
     primary: "bg-primary text-white hover:bg-opacity-90 focus:ring-primary",
     secondary: "bg-dark text-white hover:bg-opacity-90 focus:ring-dark",
     outline:
       "border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary",
+    glow: "bg-primary text-white hover:bg-opacity-90 focus:ring-primary glow-primary animate-glow-pulse",
+    ghost: "bg-transparent text-gray-400 hover:text-white focus:ring-white/20",
   };
 
   const sizeStyles = {

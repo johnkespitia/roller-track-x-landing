@@ -1,7 +1,7 @@
 // Constantes de la aplicación
 export const BRAND = {
   name: "Roller Track X",
-  tagline: "The Next Revolution of Speed",
+  tagline: "El ecosistema digital del patinaje de velocidad",
   colors: {
     primary: "#E63946",
     dark: "#1C1C1C",

@@ -5,30 +5,44 @@ import SchemaOrg from "@/components/SchemaOrg";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.rollertrackx.com"),
-  title: "Roller Track X | The Next Revolution of Speed",
-  description: "Eventos, comunidad y seguimiento deportivo para impulsar el talento del patinaje de velocidad. Empezamos con pilotos low-cost y registro gratuito.",
-  keywords: ["patinaje de velocidad", "liga de patinaje", "escuela de patinaje", "roller track", "deporte colombia"],
+  title: "Roller Track X | El ecosistema digital del patinaje de velocidad",
+  description:
+    "Comunidad, tecnología y eventos que conectan deportistas, escuelas, entrenadores y patrocinadores. El futuro del patinaje de velocidad comienza aquí.",
+  keywords: [
+    "patinaje de velocidad",
+    "comunidad patinaje",
+    "eventos patinaje",
+    "ranking patinaje",
+    "roller track",
+    "liga de patinaje",
+    "ecosistema patinaje",
+    "escuela de patinaje",
+    "deporte colombia",
+    "streaming patinaje",
+  ],
   authors: [{ name: "Roller Track X" }],
   openGraph: {
-    title: "Roller Track X | The Next Revolution of Speed",
-    description: "Eventos, comunidad y seguimiento deportivo para impulsar el talento del patinaje de velocidad.",
+    title: "Roller Track X | El ecosistema digital del patinaje de velocidad",
+    description:
+      "Comunidad, tecnología y eventos que conectan deportistas, escuelas, entrenadores y patrocinadores. El futuro del patinaje de velocidad comienza aquí.",
     type: "website",
     locale: "es_CO",
     siteName: "Roller Track X",
     url: process.env.NEXT_PUBLIC_BASE_URL || "https://www.rollertrackx.com",
     images: [
       {
-        url: "/images/brand/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Roller Track X - The Next Revolution of Speed",
+        alt: "Roller Track X - El ecosistema digital del patinaje de velocidad",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Roller Track X | The Next Revolution of Speed",
-    description: "Eventos, comunidad y seguimiento deportivo para impulsar el talento del patinaje de velocidad.",
+    title: "Roller Track X | El ecosistema digital del patinaje de velocidad",
+    description:
+      "Comunidad, tecnología y eventos que conectan deportistas, escuelas, entrenadores y patrocinadores.",
   },
   robots: {
     index: true,

@@ -6,7 +6,6 @@ export default function SchemaOrg() {
 
   return (
     <>
-      {/* Schema.org - Organization */}
       <Script
         id="schema-org-organization"
         type="application/ld+json"
@@ -19,14 +18,11 @@ export default function SchemaOrg() {
             url: baseUrl,
             logo: `${baseUrl}/images/logo/logo-horizontal.png`,
             description:
-              "Eventos, comunidad y seguimiento deportivo para impulsar el talento del patinaje de velocidad.",
-            sameAs: [
-              // Agregar redes sociales cuando estén disponibles
-            ],
+              "El ecosistema digital del patinaje de velocidad. Comunidad, tecnología y eventos que conectan deportistas, escuelas, entrenadores y patrocinadores.",
+            sameAs: [],
           }),
         }}
       />
-      {/* Schema.org - WebSite */}
       <Script
         id="schema-org-website"
         type="application/ld+json"
@@ -37,7 +33,7 @@ export default function SchemaOrg() {
             name: BRAND.name,
             url: baseUrl,
             description:
-              "Eventos, comunidad y seguimiento deportivo para impulsar el talento del patinaje de velocidad.",
+              "El ecosistema digital del patinaje de velocidad. Comunidad, tecnología y eventos que conectan deportistas, escuelas, entrenadores y patrocinadores.",
             potentialAction: {
               "@type": "SearchAction",
               target: {
