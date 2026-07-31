@@ -18,6 +18,8 @@ const NAV: TopLevelItem[] = [
   { kind: "link", label: "Sponsors", href: ROUTES.sponsors },
 ];
 
+const CLOSE_DELAY_MS = 120;
+
 function ChevronDown({ open }: { open: boolean }) {
   return (
     <svg
@@ -37,7 +39,8 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [explorarOpen, setExplorarOpen] = useState(false);
   const [explorarMobileOpen, setExplorarMobileOpen] = useState(false);
-  const explorarRef = useRef<HTMLLIElement | null>(null);
+  const explorarWrapRef = useRef<HTMLDivElement | null>(null);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -47,7 +50,7 @@ export default function Header() {
 
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
-      if (explorarRef.current && !explorarRef.current.contains(e.target as Node)) {
+      if (explorarWrapRef.current && !explorarWrapRef.current.contains(e.target as Node)) {
         setExplorarOpen(false);
       }
     }
@@ -64,6 +67,28 @@ export default function Header() {
       document.removeEventListener("keydown", onEsc);
     };
   }, []);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
+  }, []);
+
+  const openExplorar = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setExplorarOpen(true);
+  };
+
+  const scheduleCloseExplorar = () => {
+    if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    closeTimerRef.current = setTimeout(() => {
+      setExplorarOpen(false);
+      closeTimerRef.current = null;
+    }, CLOSE_DELAY_MS);
+  };
 
   const closeMenu = () => {
     setIsMenuOpen(false);
@@ -105,61 +130,73 @@ export default function Header() {
                 );
               }
               return (
-                <li
-                  key={item.label}
-                  className="relative"
-                  ref={explorarRef}
-                  onMouseEnter={() => setExplorarOpen(true)}
-                  onMouseLeave={() => setExplorarOpen(false)}
-                >
-                  <button
-                    type="button"
-                    className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary rounded"
-                    aria-haspopup="true"
-                    aria-expanded={explorarOpen}
-                    onClick={() => setExplorarOpen((v) => !v)}
+                <li key={item.label}>
+                  {/*
+                    Wrapper que contiene el botón + panel + un "puente" invisible.
+                    El puente es un div transparente de 12px que cubre el gap entre
+                    el botón y el panel: al pasar el mouse por el puente el cursor
+                    sigue dentro del wrapper y el dropdown no se cierra.
+                    Combinado con un delay de 120ms al salir, tolera movimientos
+                    rápidos del mouse.
+                  */}
+                  <div
+                    ref={explorarWrapRef}
+                    className="relative"
+                    onMouseEnter={openExplorar}
+                    onMouseLeave={scheduleCloseExplorar}
+                    onFocus={openExplorar}
+                    onBlur={scheduleCloseExplorar}
                   >
-                    {item.label}
-                    <ChevronDown open={explorarOpen} />
-                  </button>
-                  {explorarOpen && (
-                    <div
-                      className="absolute right-0 mt-3 w-[28rem] max-w-[90vw] rounded-xl border border-white/10 bg-dark/95 backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden"
-                      role="menu"
+                    <button
+                      type="button"
+                      className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary rounded"
+                      aria-haspopup="true"
+                      aria-expanded={explorarOpen}
+                      onClick={() => setExplorarOpen((v) => !v)}
                     >
-                      <Link
-                        href={ROUTES.explorar}
-                        className="block px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors"
-                        onClick={() => setExplorarOpen(false)}
+                      {item.label}
+                      <ChevronDown open={explorarOpen} />
+                    </button>
+
+                    {explorarOpen && (
+                      <div
+                        className="absolute right-0 top-full w-[28rem] max-w-[90vw] rounded-xl border border-white/10 bg-dark/95 backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden"
+                        role="menu"
                       >
-                        <div className="text-white font-heading font-bold text-sm">
-                          Ver todo en Explorar →
-                        </div>
-                        <div className="text-gray-400 text-xs mt-0.5">
-                          El centro de navegación del ecosistema
-                        </div>
-                      </Link>
-                      <ul className="grid grid-cols-2 gap-1 p-3">
-                        {item.items.map((sub) => (
-                          <li key={sub.href}>
-                            <Link
-                              href={sub.href}
-                              className="block px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
-                              role="menuitem"
-                              onClick={() => setExplorarOpen(false)}
-                            >
-                              <div className="text-white text-sm font-medium">
-                                {sub.label}
-                              </div>
-                              <div className="text-gray-500 text-xs">
-                                {sub.description}
-                              </div>
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                        <Link
+                          href={ROUTES.explorar}
+                          className="block px-5 py-4 border-b border-white/5 hover:bg-white/5 transition-colors"
+                          onClick={() => setExplorarOpen(false)}
+                        >
+                          <div className="text-white font-heading font-bold text-sm">
+                            Ver todo en Explorar →
+                          </div>
+                          <div className="text-gray-400 text-xs mt-0.5">
+                            El centro de navegación del ecosistema
+                          </div>
+                        </Link>
+                        <ul className="grid grid-cols-2 gap-1 p-3">
+                          {item.items.map((sub) => (
+                            <li key={sub.href}>
+                              <Link
+                                href={sub.href}
+                                className="block px-3 py-2 rounded-lg hover:bg-white/5 transition-colors"
+                                role="menuitem"
+                                onClick={() => setExplorarOpen(false)}
+                              >
+                                <div className="text-white text-sm font-medium">
+                                  {sub.label}
+                                </div>
+                                <div className="text-gray-500 text-xs">
+                                  {sub.description}
+                                </div>
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
                 </li>
               );
             })}
