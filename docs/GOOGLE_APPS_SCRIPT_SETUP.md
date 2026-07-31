@@ -122,6 +122,13 @@ Columnas:
 
 ## Solución de Problemas
 
+### Google devuelve HTML en lugar de JSON (página de login/consentimiento)
+Si la API responde con un error que menciona "Google devolvió una página web (HTML)":
+1. **Abre la URL del script en el navegador** (la misma que está en `GOOGLE_APPS_SCRIPT_URL`). Ejemplo: `https://script.google.com/macros/s/.../exec`
+2. Si Google muestra una pantalla de autorización, inicia sesión con la cuenta que desplegó el script y haz clic en "Permitir" / "Avanzado" → "Ir a ... (no seguro)" → "Permitir".
+3. Tras autorizar una vez, las llamadas desde el servidor (formularios) deberían recibir JSON y no HTML.
+4. Comprueba que el despliegue sea **"Quién tiene acceso: Cualquiera (incluso anónimos)"** (Desplegar → Administrar implementaciones → editar).
+
 ### Error: "SPREADSHEET_ID no configurado"
 - Verifica que hayas reemplazado `TU_SPREADSHEET_ID_AQUI` con el ID real del Sheet
 
