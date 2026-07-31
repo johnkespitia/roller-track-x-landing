@@ -1,9 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { submitForm, FormSchoolData } from "@/lib/forms";
+import { submitLead } from "@/lib/leads";
 import { trackFormSubmit } from "@/lib/analytics";
 import CTAButton from "./CTAButton";
+
+interface FormSchoolData {
+  nombreEscuela: string;
+  ciudad: string;
+  nombreContacto: string;
+  rol: string;
+  whatsapp: string;
+  email: string;
+  numeroDeportistas: string;
+  interes: string;
+  comentarios: string;
+  consent: boolean;
+}
 
 export default function FormSchool() {
   const [formData, setFormData] = useState<FormSchoolData>({
@@ -16,11 +29,13 @@ export default function FormSchool() {
     numeroDeportistas: "",
     interes: "",
     comentarios: "",
+    consent: false,
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormSchoolData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [honeypot, setHoneypot] = useState("");
 
   const validate = (): boolean => {
@@ -45,6 +60,9 @@ export default function FormSchool() {
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = "Email inválido";
     }
+    if (!formData.consent) {
+      newErrors.consent = "Debes aceptar la política de privacidad";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -64,13 +82,30 @@ export default function FormSchool() {
 
     setIsSubmitting(true);
     setSubmitStatus("idle");
+    setErrorMessage("");
 
     try {
-      const result = await submitForm("school", formData);
-      if (result.success) {
+      const result = await submitLead({
+        type: "school",
+        name: formData.nombreContacto,
+        organization: formData.nombreEscuela,
+        email: formData.email || null,
+        phone: formData.whatsapp || null,
+        city: formData.ciudad,
+        interest: formData.interes || null,
+        message: formData.comentarios || null,
+        source_page: "/escuelas",
+        consent: formData.consent,
+        website: honeypot,
+        metadata: {
+          rol: formData.rol,
+          numero_deportistas: formData.numeroDeportistas,
+        },
+      });
+
+      if (result.ok) {
         setSubmitStatus("success");
         trackFormSubmit("school");
-        // Reset form
         setFormData({
           nombreEscuela: "",
           ciudad: "",
@@ -81,12 +116,15 @@ export default function FormSchool() {
           numeroDeportistas: "",
           interes: "",
           comentarios: "",
+          consent: false,
         });
       } else {
         setSubmitStatus("error");
+        setErrorMessage(result.error || "Error al enviar el formulario");
       }
     } catch (error) {
       setSubmitStatus("error");
+      setErrorMessage(error instanceof Error ? error.message : "Error desconocido");
     } finally {
       setIsSubmitting(false);
     }
@@ -95,8 +133,12 @@ export default function FormSchool() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
     // Clear error when user starts typing
     if (errors[name as keyof FormSchoolData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
@@ -308,7 +350,8 @@ export default function FormSchool() {
           type="checkbox"
           id="consent"
           name="consent"
-          required
+          checked={formData.consent}
+          onChange={handleChange}
           className="mt-1 mr-2"
         />
         <label htmlFor="consent" className="text-sm text-gray-700">
@@ -320,11 +363,14 @@ export default function FormSchool() {
           <span className="text-primary">*</span>
         </label>
       </div>
+      {errors.consent && (
+        <p className="mt-1 text-sm text-red-600">{errors.consent}</p>
+      )}
 
       {submitStatus === "error" && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-700 text-sm">
-            Hubo un error al enviar el formulario. Por favor intenta de nuevo.
+            {errorMessage || "Hubo un error al enviar el formulario. Por favor intenta de nuevo."}
           </p>
         </div>
       )}

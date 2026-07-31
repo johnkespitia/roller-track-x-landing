@@ -1,9 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { submitForm, FormSponsorData } from "@/lib/forms";
+import { submitLead } from "@/lib/leads";
 import { trackFormSubmit } from "@/lib/analytics";
 import CTAButton from "./CTAButton";
+
+interface FormSponsorData {
+  empresa: string;
+  contacto: string;
+  email: string;
+  whatsapp: string;
+  interes: string;
+  presupuesto: string;
+  objetivoMarca: string;
+  consent: boolean;
+}
 
 export default function FormSponsor() {
   const [formData, setFormData] = useState<FormSponsorData>({
@@ -14,11 +25,13 @@ export default function FormSponsor() {
     interes: "",
     presupuesto: "",
     objetivoMarca: "",
+    consent: false,
   });
 
   const [errors, setErrors] = useState<Partial<Record<keyof FormSponsorData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [honeypot, setHoneypot] = useState("");
 
   const validate = (): boolean => {
@@ -40,6 +53,9 @@ export default function FormSponsor() {
     if (!formData.interes.trim()) {
       newErrors.interes = "El interés es requerido";
     }
+    if (!formData.consent) {
+      newErrors.consent = "Debes aceptar la política de privacidad";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -58,10 +74,26 @@ export default function FormSponsor() {
 
     setIsSubmitting(true);
     setSubmitStatus("idle");
+    setErrorMessage("");
 
     try {
-      const result = await submitForm("sponsor", formData);
-      if (result.success) {
+      const result = await submitLead({
+        type: "sponsor",
+        name: formData.contacto,
+        organization: formData.empresa,
+        email: formData.email || null,
+        phone: formData.whatsapp || null,
+        interest: formData.interes,
+        message: formData.objetivoMarca || null,
+        source_page: "/sponsors",
+        consent: formData.consent,
+        website: honeypot,
+        metadata: {
+          presupuesto: formData.presupuesto,
+        },
+      });
+
+      if (result.ok) {
         setSubmitStatus("success");
         trackFormSubmit("sponsor");
         setFormData({
@@ -72,12 +104,15 @@ export default function FormSponsor() {
           interes: "",
           presupuesto: "",
           objetivoMarca: "",
+          consent: false,
         });
       } else {
         setSubmitStatus("error");
+        setErrorMessage(result.error || "Error al enviar el formulario");
       }
     } catch (error) {
       setSubmitStatus("error");
+      setErrorMessage(error instanceof Error ? error.message : "Error desconocido");
     } finally {
       setIsSubmitting(false);
     }
@@ -86,8 +121,12 @@ export default function FormSponsor() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type } = e.target;
+    const checked = (e.target as HTMLInputElement).checked;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
     if (errors[name as keyof FormSponsorData]) {
       setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
@@ -260,7 +299,8 @@ export default function FormSponsor() {
           type="checkbox"
           id="consent"
           name="consent"
-          required
+          checked={formData.consent}
+          onChange={handleChange}
           className="mt-1 mr-2"
         />
         <label htmlFor="consent" className="text-sm text-gray-700">
@@ -272,11 +312,14 @@ export default function FormSponsor() {
           <span className="text-primary">*</span>
         </label>
       </div>
+      {errors.consent && (
+        <p className="mt-1 text-sm text-red-600">{errors.consent}</p>
+      )}
 
       {submitStatus === "error" && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-700 text-sm">
-            Hubo un error al enviar el formulario. Por favor intenta de nuevo.
+            {errorMessage || "Hubo un error al enviar el formulario. Por favor intenta de nuevo."}
           </p>
         </div>
       )}

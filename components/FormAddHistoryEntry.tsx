@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { submitForm, AthleteHistoryEntry } from "@/lib/forms";
 import { trackFormSubmit } from "@/lib/analytics";
 import CTAButton from "./CTAButton";
 import type { AthleteBasicInfo } from "./AthleteProfile";
@@ -39,9 +38,6 @@ export default function FormAddHistoryEntry({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<
-    "idle" | "success" | "error"
-  >("idle");
   const [honeypot, setHoneypot] = useState("");
 
   const validate = (): boolean => {
@@ -67,7 +63,7 @@ export default function FormAddHistoryEntry({
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (honeypot) {
@@ -79,45 +75,18 @@ export default function FormAddHistoryEntry({
     }
 
     setIsSubmitting(true);
-    setSubmitStatus("idle");
-
-    try {
-      const historyEntry: AthleteHistoryEntry = {
-        athleteName: athleteInfo.nombre,
-        athleteEmail: athleteInfo.email,
-        athleteWhatsapp: athleteInfo.whatsapp,
-        fecha: formData.fecha,
-        prueba: formData.prueba,
-        distancia: formData.distancia,
-        tiempo: formData.tiempo,
-        lugar: formData.lugar || undefined,
-        evento: formData.evento || undefined,
-        notas: formData.notas || undefined,
-        linkVideo: formData.linkVideo || undefined,
-      };
-
-      const result = await submitForm("athlete_history", historyEntry);
-      if (result.success) {
-        setSubmitStatus("success");
-        trackFormSubmit("athlete");
-        onSuccess({
-          fecha: formData.fecha,
-          prueba: formData.prueba,
-          distancia: formData.distancia,
-          tiempo: formData.tiempo,
-          lugar: formData.lugar || undefined,
-          evento: formData.evento || undefined,
-          notas: formData.notas || undefined,
-          linkVideo: formData.linkVideo || undefined,
-        });
-      } else {
-        setSubmitStatus("error");
-      }
-    } catch (error) {
-      setSubmitStatus("error");
-    } finally {
-      setIsSubmitting(false);
-    }
+    trackFormSubmit("athlete");
+    onSuccess({
+      fecha: formData.fecha,
+      prueba: formData.prueba,
+      distancia: formData.distancia,
+      tiempo: formData.tiempo,
+      lugar: formData.lugar || undefined,
+      evento: formData.evento || undefined,
+      notas: formData.notas || undefined,
+      linkVideo: formData.linkVideo || undefined,
+    });
+    setIsSubmitting(false);
   };
 
   const handleChange = (
@@ -327,10 +296,10 @@ export default function FormAddHistoryEntry({
         />
       </div>
 
-      {submitStatus === "error" && (
+      {Object.keys(errors).length > 0 && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-red-700 text-sm">
-            Hubo un error al guardar la entrada. Por favor intenta de nuevo.
+            Revisa los campos marcados en rojo.
           </p>
         </div>
       )}
