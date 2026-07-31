@@ -1,14 +1,15 @@
 import Link from "next/link";
 import Logo from "./Logo";
-import { ROUTES, BRAND } from "@/lib/constants";
+import { EXPLORAR_LABELS, ROUTES, BRAND } from "@/lib/constants";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.rollertrackx.com";
 
   return (
     <footer className="bg-dark text-white border-t border-white/5">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <Logo variant="vertical" size="sm" className="mb-4" />
             <p className="text-gray-300 text-sm mb-2">{BRAND.tagline}</p>
@@ -19,19 +20,27 @@ export default function Footer() {
           </div>
 
           <div>
-            <h3 className="font-heading font-bold mb-4">Explora</h3>
+            <h3 className="font-heading font-bold mb-4">Portal</h3>
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="/#comunidad"
+                  href={ROUTES.home}
                   className="text-gray-300 hover:text-primary transition-colors text-sm"
                 >
-                  Comunidad
+                  Inicio
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/#eventos"
+                  href={ROUTES.explorar}
+                  className="text-gray-300 hover:text-primary transition-colors text-sm"
+                >
+                  Explorar
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={ROUTES.eventos}
                   className="text-gray-300 hover:text-primary transition-colors text-sm"
                 >
                   Eventos
@@ -42,7 +51,15 @@ export default function Footer() {
                   href={ROUTES.escuelas}
                   className="text-gray-300 hover:text-primary transition-colors text-sm"
                 >
-                  Para Escuelas
+                  Escuelas
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href={ROUTES.comunidad}
+                  className="text-gray-300 hover:text-primary transition-colors text-sm"
+                >
+                  Comunidad
                 </Link>
               </li>
               <li>
@@ -50,9 +67,31 @@ export default function Footer() {
                   href={ROUTES.sponsors}
                   className="text-gray-300 hover:text-primary transition-colors text-sm"
                 >
-                  Para Sponsors
+                  Sponsors
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-heading font-bold mb-4">Explorar</h3>
+            <ul className="space-y-2">
+              {EXPLORAR_LABELS.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-gray-300 hover:text-primary transition-colors text-sm"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-heading font-bold mb-4">Legal</h3>
+            <ul className="space-y-2">
               <li>
                 <Link
                   href={ROUTES.faq}
@@ -69,14 +108,15 @@ export default function Footer() {
                   Privacidad y Términos
                 </Link>
               </li>
+              <li>
+                <a
+                  href={`mailto:contacto@${baseUrl.replace(/^https?:\/\//, "")}`}
+                  className="text-gray-300 hover:text-primary transition-colors text-sm"
+                >
+                  Contacto
+                </a>
+              </li>
             </ul>
-          </div>
-
-          <div>
-            <h3 className="font-heading font-bold mb-4">Contacto</h3>
-            <p className="text-gray-300 text-sm mb-4">
-              ¿Quieres ser parte del ecosistema? Escríbenos.
-            </p>
           </div>
         </div>
 
