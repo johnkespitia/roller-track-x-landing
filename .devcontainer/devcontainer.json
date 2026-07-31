@@ -27,9 +27,9 @@
     }
   },
 
-  "forwardPorts": [3001],
+  "forwardPorts": [4000],
   "portsAttributes": {
-    "3001": {
+    "4000": {
       "label": "Next.js",
       "onAutoForward": "notify"
     }

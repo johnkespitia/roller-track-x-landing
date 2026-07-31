@@ -1,162 +1,129 @@
-# Roller Track X - Web MVP
+# Roller Track X — Portal
 
-Plataforma web para eventos, comunidad y seguimiento deportivo del patinaje de velocidad.
+Portal de contenido y comunidad del patinaje de velocidad. Evolucionó desde
+una landing page simple hacia un ecosistema con blog, formularios de leads,
+eventos, escuelas, deportistas, clubes y rankings.
 
-## Stack Tecnológico
+> 📋 **Roadmap completo y arquitectura**: ver [`PLAN_FASES.md`](./PLAN_FASES.md).
 
-- **Framework**: Next.js 14+ (App Router) con TypeScript
-- **Estilos**: Tailwind CSS
-- **Formularios**: Google Sheets vía Apps Script
+## Stack
+
+- **Framework**: Next.js 14 (App Router) + TypeScript
+- **Estilos**: Tailwind CSS + framer-motion
+- **Contenido**: Markdown/MDX en `/content` (versionado en Git, sin CMS)
+- **Leads**: `skate-manager` Laravel API + MySQL (misma DB)
 - **Analítica**: Google Analytics 4
-- **Deploy**: Vercel o Netlify
+- **Deploy**: GitHub Pages (export estático)
 
 ## Desarrollo
 
 ### Prerrequisitos
 
 - Node.js 20+
-- npm o yarn
+- Acceso a la API de `skate-manager` (Docker o URL remota)
 
 ### Instalación
 
 ```bash
 npm install
-```
-
-### Variables de Entorno
-
-Copia el archivo de ejemplo y configura:
-
-```bash
 cp env.local.example .env.local
+# Edita .env.local con NEXT_PUBLIC_API_BASE_URL apuntando a tu API
 ```
 
-Edita `.env.local` con tus valores:
+### Variables de entorno
 
 ```env
-# Google Analytics (opcional en desarrollo)
-NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-
-# Google Apps Script (requerido para formularios)
-GOOGLE_APPS_SCRIPT_URL=https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec
-
-# Base URL
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_BASE_URL=http://localhost:4000
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api/v1
+DB_HOST=127.0.0.1          # build-time only
+DB_PORT=3308
+DB_DATABASE=skate_manager
+DB_USERNAME=skate
+DB_PASSWORD=skate
 ```
 
-**Ver documentación completa**: `docs/SETUP_ENV.md`
-
-### Desarrollo Local
+### Levantar
 
 ```bash
-npm run dev
+# 1. API Laravel + MySQL (skate-manager)
+cd ../skate-manager && docker compose up -d
+
+# 2. Front
+npm run dev   # http://localhost:4000
 ```
 
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
-
-### Build
+### Build de producción
 
 ```bash
 npm run build
-npm start
+# Genera /out (export estático) listo para GitHub Pages
 ```
 
-## Estructura del Proyecto
+## Estructura
 
 ```
 roller-track-x/
 ├── app/                    # Páginas y rutas (App Router)
-│   ├── layout.tsx         # Layout principal
-│   ├── page.tsx           # Home
-│   ├── escuelas/          # Página para escuelas
-│   ├── sponsors/          # Página para sponsors
-│   ├── faq/               # FAQ
-│   ├── legal/              # Privacidad y términos
-│   └── api/               # API routes
+│   ├── blog/               # Blog con MDX
+│   ├── explorar/           # Hub del ecosistema
+│   ├── feed.xml/           # RSS
+│   ├── sitemap.ts          # Sitemap dinámico
+│   └── ...
 ├── components/             # Componentes React
-│   ├── Header.tsx
-│   ├── Footer.tsx
-│   ├── Hero.tsx
-│   ├── Logo.tsx
-│   ├── FormSchool.tsx
-│   ├── FormAthlete.tsx
-│   └── FormSponsor.tsx
-├── lib/                    # Utilidades
-│   ├── analytics.ts       # Tracking GA4
-│   ├── forms.ts           # Lógica de formularios
-│   └── constants.ts       # Constantes
-└── public/                 # Assets estáticos
-    └── images/            # Imágenes y logos
+├── content/                # Artículos MDX (blog, news, guides, etc.)
+├── lib/
+│   ├── content/            # Lector MDX, metadata, SEO
+│   ├── leads.ts            # Cliente HTTP para /api/public/leads
+│   ├── db.ts               # Cliente MySQL build-time
+│   ├── analytics.ts        # Tracking GA4
+│   └── constants.ts        # Rutas y marca
+├── public/                 # Assets estáticos
+├── PLAN_FASES.md           # Roadmap y arquitectura
+└── .github/workflows/      # CI/CD → GitHub Pages
 ```
 
-## Assets
+## Agregar un artículo
 
-Los assets de marca (logos) deben estar en `public/images/logo/`:
-- `logo-horizontal.png` - Para Header
-- `logo-vertical.png` - Para Footer
-- `logo-icon.png` - Para favicon (opcional)
+1. Crear `content/blog/mi-articulo.mdx` con frontmatter:
+   ```mdx
+   ---
+   title: "Título"
+   description: "Resumen corto"
+   date: 2026-08-01
+   author: "Tu Nombre"
+   category: "general"
+   tags: ["ejemplo"]
+   draft: false
+   ---
 
-**Instrucciones completas**: `docs/ASSETS_PROCESSING.md`
-
-Para procesar los assets existentes en `assets/`:
-```bash
-./scripts/process-assets.sh
-```
-
-## Google Apps Script
-
-Para que los formularios funcionen, necesitas configurar un Google Apps Script:
-
-1. **Crea un Google Sheet** para almacenar los datos
-2. **Crea un Google Apps Script** (https://script.google.com)
-3. **Copia el código** de `docs/google-apps-script.js`
-4. **Configura el SPREADSHEET_ID** en el script
-5. **Despliega como aplicación web** (acceso: "Cualquiera")
-6. **Copia la URL de despliegue** y úsala como `GOOGLE_APPS_SCRIPT_URL`
-
-**Guía paso a paso**: `docs/GOOGLE_APPS_SCRIPT_SETUP.md`
+   Contenido en MDX…
+   ```
+2. `npm run build` (necesario para export estático).
+3. Aparece en `/blog`, `/blog/categoria/{category}`, `/blog/tag/{tag}`,
+   `/sitemap.xml` y `/feed.xml`.
 
 ## SEO
 
-- ✅ Metadata configurada en cada página
-- ✅ OpenGraph tags con og:image (generación dinámica)
-- ✅ Schema.org (Organization + WebSite)
-- ✅ Sitemap automático en `/sitemap.xml`
+- ✅ Metadata por página (title, description, canonical, OG, Twitter)
+- ✅ JSON-LD `Article` por post
+- ✅ Sitemap dinámico en `/sitemap.xml`
+- ✅ RSS en `/feed.xml`
 - ✅ Robots.txt en `/public/robots.txt`
-- ✅ Twitter cards
+- ✅ OpenGraph image por página
 
-## Analítica
+## Compliance
 
-Google Analytics 4 está configurado. Los eventos se trackean automáticamente:
-- Clicks en CTAs
-- Envíos de formularios
+- Ley 1581/2012 (Colombia): consentimiento explícito, IP/UA registrados,
+  honeypot en formularios.
+- Cumplimiento RGPD-ready (consentimiento separado del submit).
 
 ## Deploy
 
-### Vercel
+Push a `main` → GitHub Actions (`/.github/workflows/nextjs.yml`) →
+build + deploy a GitHub Pages.
 
-```bash
-vercel
-```
+## Documentación adicional
 
-### Netlify
-
-```bash
-netlify deploy
-```
-
-## Documentación Adicional
-
-- `SETUP_COMPLETO.md` - Guía completa de setup y deploy
-- `ESTADO_IMPLEMENTACION.md` - Estado actual del proyecto
-- `PLAN_CONSTRUCCION.md` - Plan original de construcción
-- `docs/ASSETS_PROCESSING.md` - Procesamiento de assets
-- `docs/SETUP_ENV.md` - Configuración de variables de entorno
-- `docs/GOOGLE_APPS_SCRIPT_SETUP.md` - Setup del Google Apps Script
-
-## Notas
-
-- El seguimiento es manual en el MVP
-- No se promete IA avanzada ni ranking oficial
-- Cumplimiento Ley 1581/2012 (Colombia) para protección de datos
-- Los formularios requieren Google Apps Script configurado
+- [`PLAN_FASES.md`](./PLAN_FASES.md) — roadmap completo, estado por fase
+- `docs/ASSETS.md` — convenciones de assets
+- `docs/SETUP_ENV.md` — variables de entorno

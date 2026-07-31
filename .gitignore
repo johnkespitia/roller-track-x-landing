@@ -35,3 +35,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+.aider*
+.qwen/
+
+# artefactos de crawling / scraping (desarrollo local, no parte del producto)
+*.csv
+crawler*.py
+
+# contenido local (no commitear borradores)
+# Los .mdx del contenido SÍ se commitean — esto es solo por si tienes
+# un /content/_drafts que prefieres ignorar.
+# /content/_drafts/
