@@ -23,10 +23,11 @@ export default function Logo({
 }: LogoProps) {
   const [hasError, setHasError] = useState(false);
   
-  // Usar logo.png para header (horizontal) y logo-dark.png para footer (vertical/dark)
-  const logoPath = variant === "vertical" || variant === "icon" 
-    ? `/images/logo/logo-dark.png` 
-    : `/images/logo/logo.png`;
+  // El header y el footer están siempre sobre fondo oscuro, así que usamos
+  // logo-dark.png (texto blanco sobre fondo oscuro) en todos los casos.
+  // logo.png (texto oscuro sobre fondo transparente) está reservado para
+  // futuras secciones con fondo claro (ej. landing pages en /legal, /faq).
+  const logoPath = `/images/logo/logo-dark.png`;
   
   const dimensions = sizeMap[size];
 
