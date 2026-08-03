@@ -42,6 +42,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  const guideEntries: MetadataRoute.Sitemap = (await getAll("guides")).map((post) => ({
+    url: `${baseUrl}/guias/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
   // Categorías y tags
   const categories = await getCategories("blog");
   const categoryEntries: MetadataRoute.Sitemap = categories.map((c) => ({
@@ -59,5 +66,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticEntries, ...blogEntries, ...newsEntries, ...categoryEntries, ...tagEntries];
+  return [
+    ...staticEntries,
+    ...blogEntries,
+    ...newsEntries,
+    ...guideEntries,
+    ...categoryEntries,
+    ...tagEntries,
+  ];
 }
