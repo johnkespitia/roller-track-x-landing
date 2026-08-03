@@ -1,11 +1,22 @@
 import type { Metadata } from "next";
 import type { ContentListItem, ContentType } from "./types";
 
+/** Mapeo de tipo de contenido → ruta pública en español. */
+const TYPE_PATH: Partial<Record<ContentType, string>> = {
+  news: "noticias",
+  guides: "guias",
+  events: "eventos",
+  clubs: "clubes",
+  schools: "escuelas",
+  athletes: "deportistas",
+};
+
 /**
  * Genera la URL pública de un entry.
  */
 export function contentUrl(type: ContentType, slug: string): string {
-  return `/${type}/${slug}`;
+  const base = TYPE_PATH[type] ?? type;
+  return `/${base}/${slug}`;
 }
 
 /**

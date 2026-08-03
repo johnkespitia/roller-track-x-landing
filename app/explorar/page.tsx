@@ -50,14 +50,16 @@ const accents: Record<string, string> = {
 export default async function ExplorarPage() {
   const counts = await getAll("blog").then((b) => b.length);
 
-  // Conteos por sección. Por ahora, blog tiene contenido; el resto suma del
-  // filesystem (otros types) o 0 si están vacíos.
+  // Conteos por sección (clave = segmento de URL pública).
   const sectionCounts: Record<string, number> = {
     blog: counts,
+    noticias: (await getAll("news")).length,
+    guias: (await getAll("guides")).length,
+    eventos: (await getAll("events")).length,
+    clubes: (await getAll("clubs")).length,
+    escuelas: (await getAll("schools")).length,
+    deportistas: (await getAll("athletes")).length,
   };
-  for (const type of ["news", "guides", "events", "clubs", "schools", "athletes"] as const) {
-    sectionCounts[type] = (await getAll(type)).length;
-  }
 
   const cards: ExploreCard[] = EXPLORAR_LABELS.map((item) => {
     const key = item.href.replace(/^\//, "");

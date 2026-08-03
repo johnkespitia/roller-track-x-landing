@@ -27,9 +27,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}${ROUTES.miPerfil}`, lastModified: now, changeFrequency: "weekly", priority: 0.7 },
   ];
 
-  // Contenido: blog posts
+  // Contenido: blog + noticias
   const blogEntries: MetadataRoute.Sitemap = (await getAll("blog")).map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
+    lastModified: new Date(post.date),
+    changeFrequency: "monthly",
+    priority: 0.8,
+  }));
+
+  const newsEntries: MetadataRoute.Sitemap = (await getAll("news")).map((post) => ({
+    url: `${baseUrl}/noticias/${post.slug}`,
     lastModified: new Date(post.date),
     changeFrequency: "monthly",
     priority: 0.8,
@@ -52,5 +59,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticEntries, ...blogEntries, ...categoryEntries, ...tagEntries];
+  return [...staticEntries, ...blogEntries, ...newsEntries, ...categoryEntries, ...tagEntries];
 }
