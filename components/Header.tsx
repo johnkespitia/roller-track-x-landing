@@ -34,13 +34,19 @@ function ChevronDown({ open }: { open: boolean }) {
   );
 }
 
-export default function Header() {
+interface HeaderProps {
+  /** dark = sobre hero/fondo oscuro; light = sobre páginas con fondo blanco */
+  tone?: "dark" | "light";
+}
+
+export default function Header({ tone = "dark" }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [explorarOpen, setExplorarOpen] = useState(false);
   const [explorarMobileOpen, setExplorarMobileOpen] = useState(false);
   const explorarWrapRef = useRef<HTMLDivElement | null>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isLight = tone === "light";
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -95,12 +101,24 @@ export default function Header() {
     setExplorarMobileOpen(false);
   };
 
+  const linkClass = isLight
+    ? "text-dark/70 hover:text-dark transition-colors font-medium text-sm"
+    : "text-gray-300 hover:text-white transition-colors font-medium text-sm";
+
+  const mobileLinkClass = isLight
+    ? "block text-dark/70 hover:text-dark transition-colors font-medium py-2"
+    : "block text-gray-300 hover:text-white transition-colors font-medium py-2";
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-dark/90 backdrop-blur-xl border-b border-white/5 shadow-lg"
-          : "bg-transparent"
+        isLight
+          ? scrolled
+            ? "bg-white/95 backdrop-blur-xl border-b border-dark/10 shadow-sm"
+            : "bg-white/90 backdrop-blur-md border-b border-dark/5"
+          : scrolled
+            ? "bg-dark/90 backdrop-blur-xl border-b border-white/5 shadow-lg"
+            : "bg-transparent"
       }`}
     >
       <nav className="container mx-auto px-4 py-4" aria-label="Navegación principal">
@@ -111,7 +129,11 @@ export default function Header() {
             onClick={closeMenu}
             aria-label="Roller Track X - Inicio"
           >
-            <Logo variant="horizontal" size="sm" />
+            <Logo
+              variant="horizontal"
+              size="sm"
+              tone={isLight ? "onLight" : "onDark"}
+            />
           </Link>
 
           {/* Desktop nav */}
@@ -120,10 +142,7 @@ export default function Header() {
               if (item.kind === "link") {
                 return (
                   <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="text-gray-300 hover:text-white transition-colors font-medium text-sm"
-                    >
+                    <Link href={item.href} className={linkClass}>
                       {item.label}
                     </Link>
                   </li>
@@ -149,7 +168,7 @@ export default function Header() {
                   >
                     <button
                       type="button"
-                      className="flex items-center gap-1.5 text-gray-300 hover:text-white transition-colors font-medium text-sm focus:outline-none focus:ring-2 focus:ring-primary rounded"
+                      className={`flex items-center gap-1.5 ${linkClass} focus:outline-none focus:ring-2 focus:ring-primary rounded`}
                       aria-haspopup="true"
                       aria-expanded={explorarOpen}
                       onClick={() => setExplorarOpen((v) => !v)}
@@ -204,7 +223,9 @@ export default function Header() {
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden text-white focus:outline-none focus:ring-2 focus:ring-primary rounded p-1"
+            className={`md:hidden focus:outline-none focus:ring-2 focus:ring-primary rounded p-1 ${
+              isLight ? "text-dark" : "text-white"
+            }`}
             aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={isMenuOpen}
             aria-controls="mobile-menu"
@@ -248,7 +269,9 @@ export default function Header() {
         {isMenuOpen && (
           <div
             id="mobile-menu"
-            className="md:hidden mt-4 pb-4 border-t border-white/10"
+            className={`md:hidden mt-4 pb-4 border-t ${
+              isLight ? "border-dark/10" : "border-white/10"
+            }`}
           >
             <ul className="flex flex-col gap-1 pt-4">
               {NAV.map((item) => {
@@ -257,7 +280,7 @@ export default function Header() {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className="block text-gray-300 hover:text-white transition-colors font-medium py-2"
+                        className={mobileLinkClass}
                         onClick={closeMenu}
                       >
                         {item.label}
@@ -269,7 +292,7 @@ export default function Header() {
                   <li key={item.label}>
                     <button
                       type="button"
-                      className="w-full flex items-center justify-between text-gray-300 hover:text-white transition-colors font-medium py-2"
+                      className={`w-full flex items-center justify-between ${mobileLinkClass}`}
                       aria-expanded={explorarMobileOpen}
                       onClick={() => setExplorarMobileOpen((v) => !v)}
                     >
@@ -281,7 +304,9 @@ export default function Header() {
                         <li>
                           <Link
                             href={ROUTES.explorar}
-                            className="block py-1.5 text-sm text-primary hover:text-white transition-colors"
+                            className={`block py-1.5 text-sm text-primary transition-colors ${
+                              isLight ? "hover:text-dark" : "hover:text-white"
+                            }`}
                             onClick={closeMenu}
                           >
                             Ver todo en Explorar →
@@ -291,7 +316,11 @@ export default function Header() {
                           <li key={sub.href}>
                             <Link
                               href={sub.href}
-                              className="block py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
+                              className={`block py-1.5 text-sm transition-colors ${
+                                isLight
+                                  ? "text-dark/55 hover:text-dark"
+                                  : "text-gray-400 hover:text-white"
+                              }`}
                               onClick={closeMenu}
                             >
                               {sub.label}

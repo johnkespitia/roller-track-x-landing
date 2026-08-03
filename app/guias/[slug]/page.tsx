@@ -30,7 +30,7 @@ export default async function GuiaPage({ params }: PageProps) {
 
   return (
     <>
-      <Header />
+      <Header tone="light" />
       <main className="min-h-screen bg-white">
         <ArticleLayout
           entry={entry}

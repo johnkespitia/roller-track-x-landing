@@ -8,6 +8,8 @@ interface LogoProps {
   variant?: "horizontal" | "vertical" | "icon";
   size?: "sm" | "md" | "lg";
   className?: string;
+  /** onDark = texto blanco; onLight = texto oscuro */
+  tone?: "onDark" | "onLight";
 }
 
 const sizeMap = {
@@ -20,18 +22,17 @@ export default function Logo({
   variant = "horizontal",
   size = "md",
   className = "",
+  tone = "onDark",
 }: LogoProps) {
   const [hasError, setHasError] = useState(false);
-  
-  // El header y el footer están siempre sobre fondo oscuro, así que usamos
-  // logo-dark.png (texto blanco sobre fondo oscuro) en todos los casos.
-  // logo.png (texto oscuro sobre fondo transparente) está reservado para
-  // futuras secciones con fondo claro (ej. landing pages en /legal, /faq).
-  const logoPath = `/images/logo/logo-dark.png`;
-  
+
+  // logo-dark.png = texto blanco (fondos oscuros)
+  // logo.png = texto oscuro (fondos claros)
+  const logoPath =
+    tone === "onLight" ? "/images/logo/logo.png" : "/images/logo/logo-dark.png";
+
   const dimensions = sizeMap[size];
 
-  // Si hay error, mostrar texto
   if (hasError) {
     return (
       <div className={className}>

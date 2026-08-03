@@ -25,7 +25,7 @@ export default async function SearchPage() {
 
   return (
     <>
-      <Header />
+      <Header tone="light" />
       <main className="min-h-screen bg-white">
         <section className="container mx-auto px-4 py-16 max-w-3xl">
           <h1 className="text-4xl font-heading font-bold text-dark mb-2">
