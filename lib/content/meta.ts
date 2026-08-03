@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ContentListItem, ContentType } from "./types";
+import { resolveContentImage } from "./image";
 
 /** Mapeo de tipo de contenido → ruta pública en español. */
 const TYPE_PATH: Partial<Record<ContentType, string>> = {
@@ -19,6 +20,10 @@ export function contentUrl(type: ContentType, slug: string): string {
   return `/${base}/${slug}`;
 }
 
+function absoluteImageUrl(baseUrl: string, image: string): string {
+  return image.startsWith("http") ? image : `${baseUrl}${image}`;
+}
+
 /**
  * Genera el `Metadata` para la página de detalle de un entry.
  */
@@ -28,6 +33,8 @@ export function buildArticleMetadata(
 ): Metadata {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.rollertrackx.com";
   const url = `${baseUrl}${contentUrl(type, entry.slug)}`;
+  const image = resolveContentImage(entry.image);
+  const imageUrl = absoluteImageUrl(baseUrl, image);
 
   return {
     title: entry.title,
@@ -47,24 +54,20 @@ export function buildArticleMetadata(
       publishedTime: entry.date,
       authors: [entry.author],
       tags: entry.tags,
-      images: entry.image
-        ? [
-            {
-              url: entry.image.startsWith("http") ? entry.image : `${baseUrl}${entry.image}`,
-              width: 1200,
-              height: 630,
-              alt: entry.imageAlt ?? entry.title,
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: entry.imageAlt ?? entry.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: entry.title,
       description: entry.description,
-      images: entry.image
-        ? [entry.image.startsWith("http") ? entry.image : `${baseUrl}${entry.image}`]
-        : undefined,
+      images: [imageUrl],
     },
   };
 }
@@ -75,6 +78,7 @@ export function buildArticleMetadata(
 export function articleJsonLd(type: ContentType, entry: ContentListItem): Record<string, unknown> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.rollertrackx.com";
   const url = `${baseUrl}${contentUrl(type, entry.slug)}`;
+  const image = resolveContentImage(entry.image);
 
   return {
     "@context": "https://schema.org",
@@ -99,7 +103,7 @@ export function articleJsonLd(type: ContentType, entry: ContentListItem): Record
       "@type": "WebPage",
       "@id": url,
     },
-    image: entry.image ? `${baseUrl}${entry.image}` : `${baseUrl}/opengraph-image`,
+    image: absoluteImageUrl(baseUrl, image),
     articleSection: entry.category,
     keywords: entry.tags.join(", "),
   };

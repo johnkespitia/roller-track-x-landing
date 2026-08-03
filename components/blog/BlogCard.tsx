@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { ContentListItem } from "@/lib/content/types";
 import { formatDate } from "@/lib/content/format";
+import { resolveContentImage } from "@/lib/content/image";
 
 interface BlogCardProps {
   item: ContentListItem;
@@ -9,23 +10,21 @@ interface BlogCardProps {
 }
 
 export default function BlogCard({ item, href }: BlogCardProps) {
+  const image = resolveContentImage(item.image);
+
   return (
     <article className="group flex flex-col bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
       <Link href={href} className="block">
-        {item.image ? (
-          <div className="aspect-[1200/630] bg-gray-100 relative overflow-hidden">
-            <Image
-              src={item.image}
-              alt={item.imageAlt ?? item.title}
-              fill
-              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
-              unoptimized
-            />
-          </div>
-        ) : (
-          <div className="aspect-[1200/630] bg-gradient-to-br from-primary/20 to-neon-purple/20" />
-        )}
+        <div className="aspect-[1200/630] bg-gray-100 relative overflow-hidden">
+          <Image
+            src={image}
+            alt={item.imageAlt ?? item.title}
+            fill
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+            unoptimized
+          />
+        </div>
       </Link>
 
       <div className="p-5 flex flex-col flex-1">

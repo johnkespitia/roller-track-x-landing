@@ -1,10 +1,9 @@
 import Link from "next/link";
 import type { ContentEntry, ContentListItem } from "@/lib/content/types";
 import { formatDate } from "@/lib/content/format";
+import { resolveContentImage } from "@/lib/content/image";
 import BlogCard from "@/components/blog/BlogCard";
 import ArticleBody from "./ArticleBody";
-
-const GENERIC_OG = "/images/og-image.png";
 
 interface ArticleLayoutProps {
   entry: ContentEntry;
@@ -25,7 +24,7 @@ export default function ArticleLayout({
   relatedHref,
   categoryHref,
 }: ArticleLayoutProps) {
-  const showImage = Boolean(entry.image && entry.image !== GENERIC_OG);
+  const image = resolveContentImage(entry.image);
 
   return (
     <>
@@ -76,16 +75,14 @@ export default function ArticleLayout({
           </div>
         </header>
 
-        {showImage && (
-          <div className="mb-10 aspect-[16/9] overflow-hidden rounded-xl bg-gray-100">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={entry.image}
-              alt={entry.imageAlt ?? entry.title}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+        <div className="mb-10 aspect-[16/9] overflow-hidden rounded-xl bg-gray-100">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={image}
+            alt={entry.imageAlt ?? entry.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
 
         <ArticleBody source={entry.body} />
 
