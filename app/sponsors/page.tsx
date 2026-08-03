@@ -1,18 +1,19 @@
 import { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Section from "@/components/Section";
-import CTAButton from "@/components/CTAButton";
 import FormSponsor from "@/components/FormSponsor";
+import SponsorsHero from "@/components/sponsors/SponsorsHero";
+import SponsorsBenefits from "@/components/sponsors/SponsorsBenefits";
+import SponsorsCTA from "@/components/sponsors/SponsorsCTA";
 
 export const metadata: Metadata = {
   title: "Para Sponsors | Roller Track X",
   description:
-    "Asocia tu marca con deporte, disciplina y comunidad. Patrocina eventos piloto y contenido digital con alto engagement local.",
+    "Visibilidad dirigida para tu marca en el ecosistema del patinaje. Eventos, streaming, contenido y reporte de impacto.",
   openGraph: {
     title: "Para Sponsors | Roller Track X",
     description:
-      "Asocia tu marca con deporte, disciplina y comunidad. Patrocina eventos piloto y contenido digital con alto engagement local.",
+      "Visibilidad dirigida para tu marca en el ecosistema del patinaje. Eventos, streaming, contenido y reporte de impacto.",
     url: `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.rollertrackx.com"}/sponsors`,
     images: [
       {
@@ -30,93 +31,37 @@ export default function SponsorsPage() {
     <>
       <Header />
       <main>
-        <Section background="primary" padding="lg">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-6">
-              Para Sponsors
-            </h1>
-            <p className="text-xl text-white/90">
-              Asocia tu marca con deporte, disciplina y comunidad
-            </p>
-          </div>
-        </Section>
+        <SponsorsHero />
+        <SponsorsBenefits />
+        <SponsorsCTA />
 
-        <Section background="white" padding="lg">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl font-heading font-bold text-dark mb-8 text-center">
-              Beneficios para tu marca
-            </h2>
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="p-6 border-l-4 border-primary">
-                <h3 className="text-xl font-heading font-bold text-primary mb-4">
-                  Audiencia deportiva real y local
-                </h3>
-                <p className="text-gray-700">
-                  Conecta con una audiencia comprometida con el deporte:
-                  deportistas, familias, entrenadores y fans del patinaje de
-                  velocidad.
+        <section id="formulario" className="relative overflow-hidden bg-white py-24">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[520px] h-[220px] bg-primary/5 rounded-full blur-[90px]" />
+
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="max-w-2xl mx-auto">
+              <div className="text-center mb-10">
+                <p className="text-primary text-sm font-semibold tracking-[0.18em] uppercase mb-3">
+                  Contacto
+                </p>
+                <h2 className="text-3xl md:text-4xl font-heading font-bold text-dark mb-3">
+                  Formulario de interés
+                </h2>
+                <p className="text-gray-600">
+                  Cuéntanos sobre tu marca y exploramos juntos oportunidades de patrocinio.
                 </p>
               </div>
-              <div className="p-6 border-l-4 border-primary">
-                <h3 className="text-xl font-heading font-bold text-primary mb-4">
-                  Integración en eventos
-                </h3>
-                <p className="text-gray-700">
-                  Presencia en eventos piloto, streaming en vivo, menciones en
-                  contenido digital y activaciones durante competencias.
-                </p>
-              </div>
-              <div className="p-6 border-l-4 border-primary">
-                <h3 className="text-xl font-heading font-bold text-primary mb-4">
-                  Streaming y redes sociales
-                </h3>
-                <p className="text-gray-700">
-                  Tu marca visible en transmisiones en vivo, highlights de
-                  eventos y contenido en redes sociales con alto engagement.
-                </p>
-              </div>
-              <div className="p-6 border-l-4 border-primary">
-                <h3 className="text-xl font-heading font-bold text-primary mb-4">
-                  Reporte básico de impacto
-                </h3>
-                <p className="text-gray-700">
-                  Métricas de vistas, menciones, leads generados y alcance para
-                  medir el retorno de tu inversión.
-                </p>
+
+              <div className="relative">
+                <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-primary/30 via-primary/10 to-transparent" />
+                <div className="relative rounded-2xl bg-white border border-gray-100 p-6 md:p-8 shadow-[0_20px_60px_rgba(28,28,28,0.06)]">
+                  <FormSponsor />
+                </div>
               </div>
             </div>
           </div>
-        </Section>
-
-        <Section background="dark" padding="lg">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl font-heading font-bold text-white mb-6">
-              ¿Interesado en patrocinar?
-            </h2>
-            <p className="text-lg text-gray-200 mb-8">
-              Completa el formulario y nos pondremos en contacto para
-              conversar sobre oportunidades de patrocinio y activaciones.
-            </p>
-            <CTAButton
-              href="#formulario"
-              variant="primary"
-              size="lg"
-              ctaType="sponsor"
-            >
-              Llenar formulario
-            </CTAButton>
-          </div>
-        </Section>
-
-        {/* Formulario */}
-        <Section id="formulario" background="white" padding="lg">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-2xl font-heading font-bold text-dark mb-6 text-center">
-              Formulario de interés
-            </h2>
-            <FormSponsor />
-          </div>
-        </Section>
+        </section>
       </main>
       <Footer />
     </>
